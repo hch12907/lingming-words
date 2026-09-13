@@ -28,18 +28,18 @@ fn read_file(path: PathBuf) -> (OsString, Vec<(String, String)>) {
 }
 
 #[derive(Clone, Copy, Debug)]
-enum Strategy {
+enum 构词法 {
     // 传统五笔式构词法
-    Simple,
+    传统,
 
     // 取末构词法
-    LastRoot,
+    取末,
 
     // 跳声构词法
-    Official,
+    跳声,
 
     // 取末兼跳声构词法
-    LastRootPlus,
+    取末兼跳声,
 }
 
 fn main() {
@@ -94,7 +94,7 @@ fn main() {
     let (tc_path, tc_words) = get_words("_tc.words.dict");
 
     // 计算新词库。
-    let make_word_file = |path: String, words: &Vec<String>, is_tc: bool, strategy: Strategy| {
+    let make_word_file = |path: String, words: &Vec<String>, is_tc: bool, strategy: 构词法| {
         let mut words_lastroot = Vec::new();
 
         let chaifen = if !is_tc { &chaifen } else { &chaifen };
@@ -111,7 +111,7 @@ fn main() {
                 // - A1、B1、B2、Bz（如果首字是小字根，首字取一码，次字取首码、次码、末根大码）
                 // - A1、B1、Bz （如果首字与次字都是小字根）
                 // 如果末根大码已取，依次取末根声码等。
-                (2, Strategy::LastRoot) => {
+                (2, 构词法::取末) => {
                     let zi1 = word_chars.next().unwrap();
                     let zi2 = word_chars.next().unwrap();
 
@@ -196,7 +196,7 @@ fn main() {
                     zi1 + &zi2
                 },
 
-                (3, Strategy::LastRoot) => {
+                (3, 构词法::取末) => {
                     let zi1 = word_chars.next().unwrap();
                     let zi2 = word_chars.next().unwrap();
                     let zi3 = word_chars.next().unwrap();
@@ -233,7 +233,7 @@ fn main() {
                     zi1 + &zi2 + &zi3
                 },
 
-                (4.., Strategy::LastRoot) => {
+                (4.., 构词法::取末) => {
                     let zi1 = word_chars.next().unwrap();
                     let zi2 = word_chars.next().unwrap();
                     let zi3 = word_chars.next().unwrap();
@@ -270,7 +270,7 @@ fn main() {
                     zi1 + &zi2 + &zi3 + &zi4
                 },
 
-                (2, Strategy::Simple) => {
+                (2, 构词法::传统) => {
                     let zi1 = word_chars.next().unwrap();
                     let zi2 = word_chars.next().unwrap();
 
@@ -347,7 +347,7 @@ fn main() {
                     zi1 + &zi2
                 },
 
-                (3, Strategy::Simple) => {
+                (3, 构词法::传统) => {
                     let zi1 = word_chars.next().unwrap();
                     let zi2 = word_chars.next().unwrap();
                     let zi3 = word_chars.next().unwrap();
@@ -388,7 +388,7 @@ fn main() {
                     zi1 + &zi2 + &zi3
                 },
 
-                (4.., Strategy::Simple) => {
+                (4.., 构词法::传统) => {
                     let zi1 = word_chars.next().unwrap();
                     let zi2 = word_chars.next().unwrap();
                     let zi3 = word_chars.next().unwrap();
@@ -425,7 +425,7 @@ fn main() {
                     zi1 + &zi2 + &zi3 + &zi4
                 },
 
-                (2, Strategy::Official) => {
+                (2, 构词法::跳声) => {
                     let zi1 = word_chars.next().unwrap();
                     let zi2 = word_chars.next().unwrap();
 
@@ -497,7 +497,7 @@ fn main() {
                     zi1 + &zi2
                 },
 
-                (3, Strategy::Official) => {
+                (3, 构词法::跳声) => {
                     let zi1 = word_chars.next().unwrap();
                     let zi2 = word_chars.next().unwrap();
                     let zi3 = word_chars.next().unwrap();
@@ -534,7 +534,7 @@ fn main() {
                     zi1 + &zi2 + &zi3
                 },
 
-                (4.., Strategy::Official) => {
+                (4.., 构词法::跳声) => {
                     let zi1 = word_chars.next().unwrap();
                     let zi2 = word_chars.next().unwrap();
                     let zi3 = word_chars.next().unwrap();
@@ -571,7 +571,7 @@ fn main() {
                     zi1 + &zi2 + &zi3 + &zi4
                 },
 
-                (2, Strategy::LastRootPlus) => {
+                (2, 构词法::取末兼跳声) => {
                     let zi1 = word_chars.next().unwrap();
                     let zi2 = word_chars.next().unwrap();
 
@@ -643,7 +643,7 @@ fn main() {
                     zi1 + &zi2
                 },
 
-                (3, Strategy::LastRootPlus) => {
+                (3, 构词法::取末兼跳声) => {
                     let zi1 = word_chars.next().unwrap();
                     let zi2 = word_chars.next().unwrap();
                     let zi3 = word_chars.next().unwrap();
@@ -680,7 +680,7 @@ fn main() {
                     zi1 + &zi2 + &zi3
                 },
 
-                (4.., Strategy::LastRootPlus) => {
+                (4.., 构词法::取末兼跳声) => {
                     let zi1 = word_chars.next().unwrap();
                     let zi2 = word_chars.next().unwrap();
                     let zi3 = word_chars.next().unwrap();
@@ -745,48 +745,48 @@ columns:
         sc_path.to_string_lossy().replace(".words", ".lastroot.words") + ".yaml",
         &sc_words,
         false,
-        Strategy::LastRoot
+        构词法::取末
     );
     make_word_file(
         tc_path.to_string_lossy().replace(".words", ".lastroot.words") + ".yaml",
         &tc_words,
         true,
-        Strategy::LastRoot
+        构词法::取末
     );
     make_word_file(
         sc_path.to_string_lossy().replace(".words", ".simple.words") + ".yaml",
         &sc_words,
         false,
-        Strategy::Simple
+        构词法::传统
     );
     make_word_file(
         tc_path.to_string_lossy().replace(".words", ".simple.words") + ".yaml",
         &tc_words,
         true,
-        Strategy::Simple
+        构词法::传统
     );
     make_word_file(
         sc_path.to_string_lossy().replace(".words", ".official.words") + ".yaml",
         &sc_words,
         false,
-        Strategy::Official
+        构词法::跳声
     );
     make_word_file(
         tc_path.to_string_lossy().replace(".words", ".official.words") + ".yaml",
         &tc_words,
         true,
-        Strategy::Official
+        构词法::跳声
     );
     make_word_file(
         sc_path.to_string_lossy().replace(".words", ".lastrootplus.words") + ".yaml",
         &sc_words,
         false,
-        Strategy::LastRootPlus
+        构词法::取末兼跳声
     );
     make_word_file(
         tc_path.to_string_lossy().replace(".words", ".lastrootplus.words") + ".yaml",
         &tc_words,
         true,
-        Strategy::LastRootPlus
+        构词法::取末兼跳声
     );
 }
