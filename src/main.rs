@@ -322,8 +322,13 @@ fn main() {
                                     String::from(&zi2_a[0..])
                                 }
                             } else {
-                                // 首根大码与首根声码
-                                String::from(&zi2_a[0..2])
+                                if zi2_b.len() >= 2 {
+                                    // 首根大码、首根声码、次根大码
+                                    String::from(&zi2_a[0..2]) + &zi2_b[0..1]
+                                } else {
+                                    // 首根大码、首根声码、首根韵码
+                                    String::from(&zi2_a[0..3])
+                                }
                             }
                         }
                         // 首字不是小字根，次字只取二码
