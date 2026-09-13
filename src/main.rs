@@ -27,13 +27,16 @@ fn read_file(path: PathBuf) -> (OsString, Vec<(String, String)>) {
     (name, content)
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 enum 构词法 {
     // 传统五笔式构词法
     传统,
 
     // 取末构词法
     取末,
+
+    // 取末构词法，但首字也取末
+    双取末,
 
     // 跳声构词法
     跳声,
@@ -92,14 +95,18 @@ fn make_word_file(
             // - A1、B1、B2、Bz（如果首字是小字根，首字取一码，次字取首码、次码、末根大码）
             // - A1、B1、Bz （如果首字与次字都是小字根）
             // 如果末根大码已取，依次取末根声码等。
-            (2, 构词法::取末) => {
+            (2, 构词法::取末 | 构词法::双取末) => {
                 let zi1 = word_chars.next().unwrap();
                 let zi2 = word_chars.next().unwrap();
 
                 let zi1 = {
                     let mut zi1_chai = chaifen[&zi1].split('-');
                     let zi1_a = zi1_chai.next().unwrap();
-                    let zi1_b = zi1_chai.next().unwrap_or_default();
+                    let zi1_b = if strategy == 构词法::取末 {
+                        zi1_chai.next().unwrap_or_default()
+                    } else {
+                        zi1_chai.last().unwrap_or_default()
+                    };
 
                     assert!(zi1_a.len() == 2 || zi1_a.len() == 3);
                     assert!(zi1_b.len() == 0 || zi1_b.len() >= 2);
@@ -113,8 +120,13 @@ fn make_word_file(
                             String::from(&zi1_a[0..1])
                         }
                     } else {
-                        // 首根大码与声码
-                        String::from(&zi1_a[0..2])
+                        if zi1_b.len() >= 2 && strategy == 构词法::双取末 {
+                            // 首根大码与末根大码
+                            String::from(&zi1_a[0..1]) + &zi1_b[0..1]
+                        } else {
+                            // 首根大码与声码
+                            String::from(&zi1_a[0..2])
+                        }
                     }
                 };
 
@@ -177,7 +189,7 @@ fn make_word_file(
                 zi1 + &zi2
             },
 
-            (3, 构词法::取末) => {
+            (3, 构词法::取末 | 构词法::双取末) => {
                 let zi1 = word_chars.next().unwrap();
                 let zi2 = word_chars.next().unwrap();
                 let zi3 = word_chars.next().unwrap();
@@ -214,7 +226,7 @@ fn make_word_file(
                 zi1 + &zi2 + &zi3
             },
 
-            (4.., 构词法::取末) => {
+            (4.., 构词法::取末 | 构词法::双取末) => {
                 let zi1 = word_chars.next().unwrap();
                 let zi2 = word_chars.next().unwrap();
                 let zi3 = word_chars.next().unwrap();
@@ -811,6 +823,20 @@ fn main() {
         &chaifen,
         &tc_words,
         构词法::取末兼跳声,
+        false
+    );
+    make_word_file(
+        sc_path.to_string_lossy().replace(".words", ".lastrootdouble.words") + ".yaml",
+        &chaifen,
+        &sc_words,
+        构词法::双取末,
+        false
+    );
+    make_word_file(
+        tc_path.to_string_lossy().replace(".words", ".lastrootdouble.words") + ".yaml",
+        &chaifen,
+        &tc_words,
+        构词法::双取末,
         false
     );
 }
