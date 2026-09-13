@@ -226,7 +226,7 @@ fn make_word_file(
                 zi1 + &zi2 + &zi3
             },
 
-            (4.., 构词法::取末 | 构词法::双取末) => {
+            (4.., 构词法::取末 | 构词法::双取末 | 构词法::取末兼跳声) => {
                 let zi1 = word_chars.next().unwrap();
                 let zi2 = word_chars.next().unwrap();
                 let zi3 = word_chars.next().unwrap();
@@ -386,7 +386,7 @@ fn make_word_file(
                 zi1 + &zi2 + &zi3
             },
 
-            (4.., 构词法::传统) => {
+            (4.., 构词法::传统 | 构词法::跳声) => {
                 let zi1 = word_chars.next().unwrap();
                 let zi2 = word_chars.next().unwrap();
                 let zi3 = word_chars.next().unwrap();
@@ -532,42 +532,7 @@ fn make_word_file(
                 zi1 + &zi2 + &zi3
             },
 
-            (4.., 构词法::跳声) => {
-                let zi1 = word_chars.next().unwrap();
-                let zi2 = word_chars.next().unwrap();
-                let zi3 = word_chars.next().unwrap();
-                let zi4 = word_chars.last().unwrap();
-
-                let zi1 = {
-                    let mut zi1_chai = chaifen[&zi1].split('-');
-                    let zi1_a = zi1_chai.next().unwrap();
-                    assert!(zi1_a.len() == 2 || zi1_a.len() == 3);
-                    String::from(&zi1_a[0..1])
-                };
-
-                let zi2 = {
-                    let mut zi2_chai = chaifen[&zi2].split('-');
-                    let zi2_a = zi2_chai.next().unwrap();
-                    assert!(zi2_a.len() == 2 || zi2_a.len() == 3);
-                    String::from(&zi2_a[0..1])
-                };
-
-                let zi3 = {
-                    let mut zi3_chai = chaifen[&zi3].split('-');
-                    let zi3_a = zi3_chai.next().unwrap();
-                    assert!(zi3_a.len() == 2 || zi3_a.len() == 3);
-                    String::from(&zi3_a[0..1])
-                };
-
-                let zi4 = {
-                    let mut zi4_chai = chaifen[&zi4].split('-');
-                    let zi4_a = zi4_chai.next().unwrap();
-                    assert!(zi4_a.len() == 2 || zi4_a.len() == 3);
-                    String::from(&zi4_a[0..1])
-                };
-
-                zi1 + &zi2 + &zi3 + &zi4
-            },
+            // (4.., 构词法::跳声) => {}, // 跟传统构词法一致
 
             (2, 构词法::取末兼跳声) => {
                 let zi1 = word_chars.next().unwrap();
@@ -678,42 +643,7 @@ fn make_word_file(
                 zi1 + &zi2 + &zi3
             },
 
-            (4.., 构词法::取末兼跳声) => {
-                let zi1 = word_chars.next().unwrap();
-                let zi2 = word_chars.next().unwrap();
-                let zi3 = word_chars.next().unwrap();
-                let zi4 = word_chars.last().unwrap();
-
-                let zi1 = {
-                    let mut zi1_chai = chaifen[&zi1].split('-');
-                    let zi1_a = zi1_chai.next().unwrap();
-                    assert!(zi1_a.len() == 2 || zi1_a.len() == 3);
-                    String::from(&zi1_a[0..1])
-                };
-
-                let zi2 = {
-                    let mut zi2_chai = chaifen[&zi2].split('-');
-                    let zi2_a = zi2_chai.next().unwrap();
-                    assert!(zi2_a.len() == 2 || zi2_a.len() == 3);
-                    String::from(&zi2_a[0..1])
-                };
-
-                let zi3 = {
-                    let mut zi3_chai = chaifen[&zi3].split('-');
-                    let zi3_a = zi3_chai.next().unwrap();
-                    assert!(zi3_a.len() == 2 || zi3_a.len() == 3);
-                    String::from(&zi3_a[0..1])
-                };
-
-                let zi4 = {
-                    let zi4_chai = chaifen[&zi4].split('-');
-                    let zi4_z = zi4_chai.last().unwrap();
-                    assert!(zi4_z.len() == 2 || zi4_z.len() == 3);
-                    String::from(&zi4_z[0..1])
-                };
-
-                zi1 + &zi2 + &zi3 + &zi4
-            },
+            // (4.., 构词法::取末兼跳声) => {}, // 跟取末构词法一致
         };
 
         words_lastroot.push((word.to_owned(), code));
